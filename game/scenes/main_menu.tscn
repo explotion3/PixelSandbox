@@ -1,0 +1,94 @@
+[gd_scene format=3]
+
+[node name="MainMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Center" type="CenterContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Column" type="VBoxContainer" parent="Center"]
+custom_minimum_size = Vector2(580, 0)
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Eyebrow" type="Label" parent="Center/Column"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.85, 0.69, 0.39, 1)
+theme_override_font_sizes/font_size = 14
+text = "MATERIAL LAB     /     NOITA PROTOTYPE"
+
+[node name="Title" type="Label" parent="Center/Column"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 56
+text = "PixelSandbox"
+
+[node name="Description" type="Label" parent="Center/Column"]
+layout_mode = 2
+text = "粉末 · 液体 · 气体 · 火焰 · 材料反应"
+
+[node name="Spacer" type="Control" parent="Center/Column"]
+custom_minimum_size = Vector2(0, 10)
+layout_mode = 2
+
+[node name="MaterialLab" type="Button" parent="Center/Column"]
+layout_mode = 2
+text = "进入材料实验场  /  Material laboratory"
+alignment = 0
+
+[node name="NewWall" type="Button" parent="Center/Column"]
+layout_mode = 2
+text = "进入石墙测试  /  Stone wall"
+alignment = 0
+
+[node name="Load" type="Button" parent="Center/Column"]
+layout_mode = 2
+text = "读取存档  /  Load saved world"
+alignment = 0
+
+[node name="NewWorld" type="Button" parent="Center/Column"]
+layout_mode = 2
+text = "新建空世界  /  Empty world"
+alignment = 0
+
+[node name="Quit" type="Button" parent="Center/Column"]
+layout_mode = 2
+text = "退出  /  Quit"
+alignment = 0
+
+[node name="SessionStatus" type="Label" parent="Center/Column"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.50, 0.66, 0.63, 1)
+theme_override_font_sizes/font_size = 14
+text = "SESSION  /  Idle     TICK  /  0"
+
+[node name="Error" type="Label" parent="Center/Column"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.47, 0.37, 1)
+custom_minimum_size = Vector2(580, 0)
+autowrap_mode = 2
+
+[node name="Footer" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 36.0
+offset_top = -42.0
+offset_right = -36.0
+offset_bottom = -16.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_colors/font_color = Color(0.38, 0.52, 0.51, 1)
+theme_override_font_sizes/font_size = 14
+text = "64 × 64 区块   ·   8 × 8 修补格   ·   C++20   ·   60 Hz"

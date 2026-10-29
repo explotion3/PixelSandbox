@@ -1,0 +1,41 @@
+{
+  "version": 6,
+  "configurePresets": [
+    {
+      "name": "windows-debug",
+      "displayName": "Editor development (optimized with debug symbols)",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/windows-debug",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "RelWithDebInfo",
+        "CMAKE_CXX_COMPILER": "cl",
+        "GODOTCPP_TARGET": "template_debug"
+      }
+    },
+    {
+      "name": "windows-release",
+      "inherits": "windows-debug",
+      "binaryDir": "${sourceDir}/build/windows-release",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "GODOTCPP_TARGET": "template_release"
+      }
+    },
+    {
+      "name": "core-only",
+      "inherits": "windows-debug",
+      "binaryDir": "${sourceDir}/build/core-only",
+      "cacheVariables": { "PIXEL_BUILD_HOST": "OFF", "CMAKE_BUILD_TYPE": "Debug" }
+    }
+  ],
+  "buildPresets": [
+    { "name": "windows-debug", "configurePreset": "windows-debug", "jobs": 12 },
+    { "name": "windows-release", "configurePreset": "windows-release", "jobs": 12 },
+    { "name": "core-only", "configurePreset": "core-only", "jobs": 12 }
+  ],
+  "testPresets": [
+    { "name": "windows-debug", "configurePreset": "windows-debug", "output": { "outputOnFailure": true } },
+    { "name": "windows-release", "configurePreset": "windows-release", "output": { "outputOnFailure": true } },
+    { "name": "core-only", "configurePreset": "core-only", "output": { "outputOnFailure": true } }
+  ]
+}

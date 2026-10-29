@@ -1,0 +1,9 @@
+{
+  "purpose": "Temporary local prototype art, imported at the user's request; Noita / Nolla Games source asset",
+  "source_install": "E:\\SteamLibrary\\steamapps\\common\\Noita",
+  "source_archive": "data/data.wak",
+  "archive_sha256": "c95a0c01a55ec29267afef6bbec8a0cae0ba2b350638e2203674ed4dfb9227c3",
+  "archive_entry": "data/materials_gfx/rock.png",
+  "output_sha256": "df3ccb53f58ead2f26ba97161424a8e53de45e6cc0c12c9b1b823a20ec9c8c9e",
+  "bytes": 588
+}

@@ -1,0 +1,7 @@
+{
+  "enabled_classes": [
+    "OptionButton", "Node", "Control", "Label", "Button", "Resource", "ResourceLoader",
+    "PackedScene", "SceneTree", "Engine", "OS", "ProjectSettings",
+    "Viewport", "FileAccess", "InputEventKey", "InputEventMouseButton", "InputEventMouseMotion", "ImageTexture"
+  ]
+}

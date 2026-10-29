@@ -1,0 +1,13 @@
+/build/
+/dist/
+/bin/
+/tools/_cache/
+/third_party/godot-cpp/
+/third_party/box2d/
+/game/.godot/
+/game/bin/*
+!/game/bin/.gitkeep
+*.pdb
+*.obj
+*.user
+__pycache__/

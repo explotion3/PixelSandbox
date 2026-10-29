@@ -1,0 +1,79 @@
+# A;B;output A;output B;sampling denominator[;minimum age of A;minimum contact heat;maximum contact heat[;C;output C]]
+# probability=0..100 selects source gates; the denominator applies only without this option. Invocation frequency remains project-owned.
+# Source options: fast, direction, required, destroy_lonely, blob_radius_a, blob_radius_b, restrict_a, restrict_b. Legacy radii use connected disks.
+[fire];material.water;keep;material.steam;1;probability=20;fast=0
+[fire];material.snow;keep;material.steam;5;probability=20;fast=0
+[fire];material.snow;keep;material.water;1;probability=80;fast=0
+[lava];material.water;material.stone;material.steam;1;probability=80;fast=0;blob_radius_a=6;restrict_a=1;blob_radius_b=3;restrict_b=1
+[lava];material.chilly_water;material.stone;material.steam;1;probability=80;fast=0;blob_radius_a=4;restrict_a=1;blob_radius_b=4;restrict_b=1
+[lava];material.mud;material.sand_static;material.steam;1;probability=80;fast=0;blob_radius_a=4;restrict_a=1;blob_radius_b=4;restrict_b=1
+[lava];material.salt_water;material.glowrock;material.steam;1;probability=80;fast=0;blob_radius_a=6;restrict_a=1;blob_radius_b=3;restrict_b=1
+[lava];material.blood;material.lavarock;material.steam;1;probability=70;fast=0;blob_radius_a=4;restrict_a=1;blob_radius_b=4;restrict_b=1
+# Static water has no original [water] tag; retain the existing laboratory interaction explicitly.
+[lava];material.water_static;material.stone;material.steam;1;blob_radius_a=6;blob_radius_b=3
+[acid];[corrodible];keep;material.acid_gas;8;probability=50;fast=1;blob_radius_a=2;restrict_a=1;blob_radius_b=2;restrict_b=1
+material.water;material.sludge;keep;material.water;4;probability=13;fast=0
+material.water_static;material.sludge;keep;material.water;4;probability=15;fast=0
+material.salt_water;material.sludge;keep;material.water;4;probability=20;fast=0
+material.salt;material.water;air;material.salt_water;3;probability=5;fast=0
+material.water;material.cement;material.concrete;air;1;probability=100;fast=0;destroy_lonely=1
+material.cement;material.concrete;material.concrete;keep;2;300;probability=70;fast=0;destroy_lonely=1
+material.cement;air;material.concrete;keep;32;300;probability=90;fast=0;destroy_lonely=1
+material.alcohol;[fire];material.fire;material.alcohol_gas;2
+material.alcohol;[lava];material.fire;material.alcohol_gas;2
+material.alcohol;air;keep;material.alcohol_gas;160;probability=4;fast=0
+# Original three-input salt-water evaporation: B/C are distinct cardinal neighbors of A.
+[fire];material.salt_water;keep;material.salt;5;0;-1000;10000;material.salt_water;material.steam;probability=20;fast=0
+[fire];[meltable_to_slime];keep;material.slime;4;probability=40;fast=0
+[fire];[slime];material.cloud_slime;material.cloud_slime;5;probability=70;fast=0
+material.water;[slime];keep;material.cloud_slime;5;probability=10;fast=0
+material.alcohol;[slime];keep;material.smoke;3;probability=30;fast=0
+# Original copper/brass/water transmutation; source sampling with project invocation timing.
+material.copper;material.brass;material.silver;material.smoke;1;0;-1000;10000;material.water;material.smoke;probability=100;fast=0
+# Source chilled-water freezing requires a separate air contact, not just an ice neighbor.
+material.chilly_water;material.ice;material.ice;keep;1;0;-1000;10000;air;keep;probability=35;fast=0;blob_radius_a=4;restrict_a=1;blob_radius_b=4;restrict_b=1
+# Source-name family selectors are expanded and validated by the native registry.
+[fire_strong];[meltable_metal];keep;[meltable_metal]_molten;3;probability=30;fast=0
+[meltable_metal];[lava];[meltable_metal]_molten;keep;1;probability=80;fast=0
+[meltable_metal_generic];[fire_strong];material.metal_sand_molten;keep;3;probability=30;fast=0
+[meltable_metal_generic];[lava];material.metal_sand_molten;keep;1;probability=30;fast=0
+[fire];[meltable];material.smoke;[meltable]_molten;2;probability=20;fast=0
+[meltable]_molten;air;[meltable];keep;10;probability=10;fast=0
+[meltable]_molten;material.water;[meltable];material.steam;2;probability=20;fast=0
+[meltable];[lava];[meltable]_molten;keep;1;probability=80;fast=0
+material.gold_molten;[water];material.gold;material.steam;2;probability=50;fast=0
+material.silver_molten;[water];material.silver;material.steam;2;probability=50;fast=0
+material.copper_molten;[water];material.copper;material.steam;2;probability=50;fast=0
+material.brass_molten;[water];material.brass;material.steam;2;probability=50;fast=0
+material.steel_molten;[water];material.steel_sand;material.steam;2;probability=50;fast=0
+material.wax_molten;[water];material.wax;material.steam;2;probability=50;fast=0
+[molten_metal];[water];material.metal_sand;material.steam;2;probability=50;fast=0
+material.gold_molten;[frozen];material.gold;keep;2;probability=50;fast=0
+material.silver_molten;[frozen];material.silver;keep;2;probability=50;fast=0
+material.copper_molten;[frozen];material.copper;keep;2;probability=50;fast=0
+material.brass_molten;[frozen];material.brass;keep;2;probability=50;fast=0
+material.steel_molten;[frozen];material.steel_sand;keep;2;probability=50;fast=0
+material.wax_molten;[frozen];material.wax;keep;2;probability=50;fast=0
+[molten_metal];[frozen];material.metal_sand;keep;2;probability=50;fast=0
+# source interaction 8
+material.steam;[static];material.water;[static];1;probability=3;fast=0
+# source interaction 14
+[fire];material.ice;[fire];material.water;1;probability=40;fast=0
+# source interaction 54
+[acid];air;material.acid_gas;air;1;probability=10;fast=1
+# source interaction 55
+[acid];material.acid_gas;material.acid_gas;air;1;probability=12;fast=1
+# source interaction 100
+[lava];[meltable_to_acid];[lava];material.acid;1;probability=80;fast=0
+# source interaction 101
+[fire];[meltable_to_acid];[fire];material.acid;1;probability=90;fast=0
+# source interaction 190
+material.acid_gas_static;air;material.acid_gas_static;material.acid_gas;1;probability=70;fast=1
+# source interaction 208
+material.mana;material.water;material.mana;material.mana;1;probability=25;fast=0
+# source interaction 209
+material.mana;[meltable_metal];material.mana;material.steam;1;probability=25;fast=0
+# source interaction 212
+material.mana;[meltable_metal_generic];material.mana;material.steam;1;probability=25;fast=0
+# source interaction 280
+material.acid_gas_static;air;material.acid_gas;air;1;probability=10;fast=0

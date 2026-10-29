@@ -1,0 +1,14 @@
+{
+  "godot": "4.7.2-stable",
+  "godot_api": "4.7",
+  "godot_cpp_tag": "10.0.0-stable",
+  "godot_cpp_commit": "507ed9d840c01a3c5b2a39af8bb4000bfac30bf5",
+  "msvc_tools": "14.44.35207",
+  "msvc_compiler": "19.44.35227.0",
+  "windows_sdk": "10.0.26100.0",
+  "cmake": "4.0.1",
+  "ninja": "1.13.2",
+  "python": "3.13.2",
+  "box2d_tag": "v3.1.1",
+  "box2d_commit": "8c661469c9507d3ad6fbd2fea3f1aa71669c2fe3"
+}

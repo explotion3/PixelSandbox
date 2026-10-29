@@ -1,0 +1,23 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Theme" path="res://scenes/sandbox_theme.tres" id="1_theme"]
+[ext_resource type="PackedScene" path="res://scenes/main_menu.tscn" id="2_menu"]
+[ext_resource type="PackedScene" path="res://scenes/world_view.tscn" id="3_world"]
+
+[node name="PixelSandbox" type="SandboxApp"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("1_theme")
+
+[node name="Session" type="SandboxSessionNode" parent="."]
+
+[node name="MainMenu" parent="." instance=ExtResource("2_menu")]
+layout_mode = 1
+
+[node name="WorldView" parent="." instance=ExtResource("3_world")]
+visible = false
+layout_mode = 1

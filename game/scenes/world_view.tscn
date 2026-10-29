@@ -1,0 +1,180 @@
+[gd_scene load_steps=2 format=3]
+
+[sub_resource type="StyleBoxFlat" id="Style_panel"]
+bg_color = Color(0.035, 0.055, 0.065, 0.96)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.22, 0.36, 0.36, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_left = 10
+corner_radius_bottom_right = 10
+content_margin_left = 16.0
+content_margin_right = 16.0
+content_margin_top = 16.0
+content_margin_bottom = 16.0
+
+[node name="WorldView" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Canvas" type="SandboxWorldCanvas" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Tabs" type="HBoxContainer" parent="."]
+layout_mode = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -436.0
+offset_top = 12.0
+offset_right = -16.0
+offset_bottom = 48.0
+grow_horizontal = 0
+theme_override_constants/separation = 8
+
+[node name="Tools" type="Button" parent="Tabs"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "工具"
+toggle_mode = true
+button_pressed = true
+
+[node name="Data" type="Button" parent="Tabs"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "数据"
+toggle_mode = true
+
+[node name="Toggle" type="Button" parent="Tabs"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "收起 [Tab]"
+
+[node name="Margin" type="PanelContainer" parent="."]
+layout_mode = 1
+anchor_left = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -436.0
+offset_top = 60.0
+offset_right = -16.0
+offset_bottom = -16.0
+grow_horizontal = 0
+grow_vertical = 2
+mouse_filter = 0
+theme_override_styles/panel = SubResource("Style_panel")
+
+[node name="Scroll" type="ScrollContainer" parent="Margin"]
+layout_mode = 2
+horizontal_scroll_mode = 0
+
+[node name="Column" type="VBoxContainer" parent="Margin/Scroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 12
+
+[node name="Title" type="Label" parent="Margin/Scroll/Column"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+text = "实验场工具"
+
+[node name="Status" type="Label" parent="Margin/Scroll/Column"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.51, 0.79, 0.65, 1)
+text = "SESSION  /  Running"
+
+autowrap_mode = 2
+
+[node name="Tick" type="Label" parent="Margin/Scroll/Column"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "LOGIC TICK  /  0"
+
+autowrap_mode = 2
+
+[node name="Brush" type="VBoxContainer" parent="Margin/Scroll/Column"]
+layout_mode = 2
+
+[node name="Material" type="OptionButton" parent="Margin/Scroll/Column/Brush"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Tool" type="OptionButton" parent="Margin/Scroll/Column/Brush"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Radius" type="OptionButton" parent="Margin/Scroll/Column/Brush"]
+layout_mode = 2
+
+[node name="Step" type="Button" parent="Margin/Scroll/Column/Brush"]
+layout_mode = 2
+text = "单步 / Step"
+
+[node name="Reset" type="Button" parent="Margin/Scroll/Column/Brush"]
+layout_mode = 2
+text = "重置实验场"
+
+[node name="Content" type="Label" parent="Margin/Scroll/Column"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.59, 0.70, 0.65, 1)
+theme_override_font_sizes/font_size = 17
+text = "CONTENT"
+autowrap_mode = 2
+
+[node name="Operation" type="Label" parent="Margin/Scroll/Column"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 15
+text = "Left: dig / Right: repair 8x8"
+autowrap_mode = 2
+
+[node name="IO" type="Label" parent="Margin/Scroll/Column"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.87, 0.73, 0.44, 1)
+theme_override_font_sizes/font_size = 15
+text = "No save/load operation yet."
+autowrap_mode = 2
+
+[node name="Tools" type="HBoxContainer" parent="Margin/Scroll/Column"]
+layout_mode = 2
+
+[node name="Pickup" type="Button" parent="Margin/Scroll/Column/Tools"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 16
+text = "拾取全部"
+
+[node name="Save" type="Button" parent="Margin/Scroll/Column/Tools"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 16
+text = "保存"
+
+[node name="Load" type="Button" parent="Margin/Scroll/Column/Tools"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 16
+text = "读取"
+
+[node name="Actions" type="HBoxContainer" parent="Margin/Scroll/Column"]
+layout_mode = 2
+
+[node name="Pause" type="Button" parent="Margin/Scroll/Column/Actions"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "暂停世界  /  Pause"
+
+[node name="Return" type="Button" parent="Margin/Scroll/Column/Actions"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "主界面"
