@@ -337,7 +337,7 @@ void MaterialSimulation::step(WorldState& w,const ContentRegistry& content){
     };
     auto move = [&](CellPos p, CellPos q, CellState& travelling, bool upward, bool horizontal) {
         const auto material = *w.material_at(p);
-        if (!can_enter(material,q,upward,horizontal) || updated[index(q)]) return false;
+        if (!can_enter(material,q,upward,horizontal) || (updated[index(q)] && transported[index(q)])) return false;
         const auto other = *w.material_at(q);
         auto displaced = *w.cell_state(q);
         travelling.quiet_ticks=0;travelling.adhesion_ticks=0;displaced.quiet_ticks=0;displaced.adhesion_ticks=0;
@@ -379,6 +379,16 @@ void MaterialSimulation::step(WorldState& w,const ContentRegistry& content){
                 ? std::clamp(state.velocity_y-d->gravity_q8,-d->gas_upward_speed_q8,d->gas_downward_speed_q8)
                 : std::clamp(state.velocity_y+d->gravity_q8,-d->terminal_speed_q8,d->terminal_speed_q8);
             }
+            auto enterable_liquid = [&](CellPos q) {
+                const auto other=w.surface_material_at(q);
+                return other && motion(*other,w.surface_cell_state(q)->mobilized)==Motion::liquid &&
+                    can_enter(material,q,false,false);
+            };
+            const CellPos below{p.x,p.y+1};
+            const bool liquid_limited=category==Motion::powder && state.velocity_y>=0 &&
+                (enterable_liquid(below) || (!can_enter(material,below,false,false) &&
+                (enterable_liquid({p.x-1,p.y+1}) || enterable_liquid({p.x+1,p.y+1}))));
+            if(liquid_limited)state.velocity_y=std::min(state.velocity_y,d->powder_liquid_speed_q8);
             const int credit = std::abs(state.velocity_y)+state.vertical_fraction;
             int vertical_steps = credit/256;
             state.vertical_fraction = static_cast<std::uint16_t>(credit%256);
@@ -386,13 +396,23 @@ void MaterialSimulation::step(WorldState& w,const ContentRegistry& content){
                 vertical_steps=static_cast<int>(fine_credit/(1u<<24));state.liquid_fraction_y=static_cast<std::uint32_t>(fine_credit%(1u<<24));state.vertical_fraction=0;}
             // Fractional gravity must also settle. Otherwise a supported liquid
             // alternates between a fractional velocity and zero forever.
-            bool blocked = (up && d->gas_upward_speed_q8==0 && state.velocity_y==0) || (vertical_steps==0 && state.velocity_y*dy>=0 &&
+            const auto support=w.surface_material_at(below);
+            const auto support_state=w.surface_cell_state(below);
+            const bool comoving=category==Motion::powder && state.velocity_y>0 && support && support_state &&
+                motion(*support,support_state->mobilized)==Motion::powder && support_state->velocity_y>0;
+            bool blocked = (up && d->gas_upward_speed_q8==0 && state.velocity_y==0) || (vertical_steps==0 && !comoving && state.velocity_y*dy>=0 &&
                 !can_enter(material,{p.x,p.y+dy},up,false) &&
                 !can_enter(material,{p.x-1,p.y+dy},up,false) &&
                 !can_enter(material,{p.x+1,p.y+dy},up,false));
             for (int n=0; n<vertical_steps; ++n) {
                 const CellPos next{p.x,p.y+(state.velocity_y<0 ? -1 : 1)};
                 const bool travelling_up = state.velocity_y<0;
+                // Airborne substeps may reach water after integration. Discard the
+                // air budget at that boundary; accrue the liquid rate next tick.
+                if(category==Motion::powder && !travelling_up && !liquid_limited && enterable_liquid(next)){
+                    state.velocity_y=std::min(state.velocity_y,d->powder_liquid_speed_q8);
+                    state.vertical_fraction=0;break;
+                }
                 if (!move(p,next,state,travelling_up,false)) { blocked=true; break; }
                 p=next;
             }
@@ -403,6 +423,7 @@ void MaterialSimulation::step(WorldState& w,const ContentRegistry& content){
                 for (const int dx : {preferred,-preferred}) {
                     if(!vertical_steps)break;
                     const CellPos next{p.x+dx,p.y+dy};
+                    if(category==Motion::powder && !liquid_limited && enterable_liquid(next))continue;
                     if (move(p,next,state,up,false)) { p=next; rolled=true; break; }
                 }
                 if (rolled && category==Motion::powder) { w.set_cell(p,material,state); continue; }

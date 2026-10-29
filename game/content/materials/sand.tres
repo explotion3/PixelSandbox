@@ -30,6 +30,7 @@ damping_milli = 900
 lateral_speed_q8 = 256
 flow_search = 64
 terminal_speed_q8 = 2048
+powder_liquid_speed_q8 = 102
 gas_upward_speed_q8 = 256
 gas_horizontal_speed_q8 = 256
 gas_downward_speed_q8 = 2048

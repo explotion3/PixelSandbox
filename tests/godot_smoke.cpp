@@ -74,6 +74,8 @@ void SandboxApp::smoke_step(double delta) {
             const auto* steel_contact=contacts?contacts.registry->find_material("material.steel"):nullptr;
             if(!check(ice_contact && wood_contact && steel_contact && std::abs(ice_contact->solid_friction-0.05f)<0.00001f && std::abs(wood_contact->solid_friction-0.9f)<0.00001f && std::abs(steel_contact->solid_friction-0.75f)<0.00001f,"Actual ice/wood/steel resources retain source contact friction"))return;
             const auto* original_fire=contacts.registry->find_material("material.fire");
+            const auto* original_sand=contacts.registry->find_material("material.sand");
+            if(!check(original_sand && original_sand->powder_liquid_speed_q8==102,"Actual sand resource exposes configured liquid sinking rate"))return;
             const auto* original_glue=contacts.registry->find_material("material.glue");
             const auto* original_slime=contacts.registry->find_material("material.slime");
             if(!check(original_glue && original_slime && original_glue->source_adhesion && original_glue->liquid_sticks_to_ceiling==100 &&
@@ -82,12 +84,14 @@ void SandboxApp::smoke_step(double delta) {
                 original_fire && original_fire->initially_burning && !original_fire->burnable,"Actual resources keep source combustibility, initial fire, signed threshold and independent smoke gate"))return;
             Ref<SandboxMaterialDefinition> direction_resource;direction_resource.instantiate();
             direction_resource->set_solid_friction(0.125);
+            direction_resource->set("powder_liquid_speed_q8",77);
             direction_resource->set_content_id("material.direction_probe");direction_resource->set_gas_upward_speed_q8(128);
             direction_resource->set_gas_horizontal_speed_q8(512);direction_resource->set_gas_downward_speed_q8(768);
             MaterialDefinition direction_values;String conversion_error;
             if(!check(direction_resource->to_native(direction_values,conversion_error) && direction_values.gas_upward_speed_q8==128 &&
                 direction_values.gas_horizontal_speed_q8==512 && direction_values.gas_downward_speed_q8==768,"C++ Resource converts nondefault gas direction parameters"))return;
             if(!check(direction_values.solid_friction==0.125f,"C++ Resource converts fractional contact friction"))return;
+            if(!check(direction_values.powder_liquid_speed_q8==77,"Godot property binding converts nondefault powder sinking rate"))return;
             direction_resource->set_solid_friction(-0.1);
             if(!check(!direction_resource->to_native(direction_values,conversion_error) && conversion_error.contains("solid_friction"),"Resource rejects invalid contact friction with a specific field error"))return;
             direction_resource->set_solid_friction(0.6);

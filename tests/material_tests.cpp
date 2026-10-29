@@ -315,6 +315,67 @@ void wide_liquid(){
         need(steady==rest && !a.published_world()->active_chunks && a.take_changes().dirty_chunks.empty(),"remote disturbance settles again without perpetual wake propagation");
     }
 }
+std::shared_ptr<const ContentRegistry> powder_catalog(int liquid_speed=102){
+    auto definitions=catalog(false)->materials();
+    for(auto& d:definitions){
+        if(d.id=="material.sand"){d.gravity_q8=230;d.powder_liquid_speed_q8=liquid_speed;}
+        if(d.id=="material.water"){d.source_liquid=true;d.liquid_gravity=1.5f;}
+    }
+    auto result=ContentRegistry::build(std::move(definitions));need(bool(result),result.error);return result.registry;
+}
+void powder_block(){
+    const auto c=powder_catalog();GameSession s(c);auto snap=blank(*c,{{-32,0},64,256});
+    rect(snap,*c,-10,10,20,20,"material.sand");restore(s,snap);
+    for(int t=0;t<15;++t){
+        ticks(s,1);int top=256,bottom=-1,left=64,right=-64;
+        for(int y=0;y<256;++y)for(int x=-32;x<32;++x)if(s.world()->material_at({x,y})==s.world()->material_index("material.sand")){
+            top=std::min(top,y);bottom=std::max(bottom,y);left=std::min(left,x);right=std::max(right,x);
+        }
+        need(count(s,"material.sand")==400 && bottom-top+1==20 && right-left+1==20,"20x20 powder falls as one block, including fractional startup");
+        if(t==14)std::cout<<"falling block tick15 bounds="<<left<<','<<top<<".."<<right<<','<<bottom<<'\n';
+    }
+    snap=blank(*c,{{-32,0},64,128});rect(snap,*c,-32,96,64,1,"material.stone");
+    rect(snap,*c,-10,76,20,20,"material.sand");restore(s,snap);ticks(s,180);
+    const auto rest=*s.capture_snapshot();static_cast<void>(s.take_changes());
+    for(int t=0;t<100;++t){ticks(s,1);auto after=*s.capture_snapshot();after.tick=rest.tick;
+        need(after==rest && !s.published_world()->active_chunks && s.take_changes().dirty_chunks.empty(),"stationary powder pile stays asleep with no state or dirty-chunk churn");}
+}
+void powder_sink(){
+    const auto c=powder_catalog();GameSession s(c);auto snap=blank(*c,{{-24,0},48,160});
+    rect(snap,*c,-24,0,1,160,"material.stone");rect(snap,*c,23,0,1,160,"material.stone");
+    rect(snap,*c,-24,159,48,1,"material.stone");rect(snap,*c,-24,0,48,1,"material.stone");
+    rect(snap,*c,-23,60,46,99,"material.water");rect(snap,*c,-10,10,20,20,"material.sand");restore(s,snap);
+    const auto water=count(s,"material.water");
+    for(int t=0;t<700;++t){ticks(s,1);need(count(s,"material.sand")==400 && count(s,"material.water")==water,"sand/water exchange conserves both counts every step");}
+    int top=160,bottom=0;
+    for(int y=0;y<160;++y)for(int x=-24;x<24;++x)if(s.world()->material_at({x,y})==s.world()->material_index("material.sand")){top=std::min(top,y);bottom=std::max(bottom,y);}
+    std::cout<<"sunken 400-cell block y="<<top<<".."<<bottom<<" water="<<water<<'\n';
+    need(bottom==158 && top>=134,"entire sand block sinks to the closed pool bottom");
+}
+void powder_liquid_rate(){
+    for(const int rate:{77,102,128}){
+        const auto c=powder_catalog(rate);GameSession s(c);auto snap=blank(*c,{{-1,0},3,160});
+        rect(snap,*c,-1,0,3,160,"material.stone");rect(snap,*c,0,1,1,158,"material.water");put(snap,*c,{0,10},"material.sand");
+        snap.states[10*3+1].velocity_y=2048;restore(s,snap);
+        for(int t=1;t<=100;++t){ticks(s,1);const int expected_y=10+t*rate/256;
+            need(s.world()->material_at({0,expected_y})==s.world()->material_index("material.sand"),"submerged fall accumulates the configured fractional rate, including high-speed entry");
+            need(count(s,"material.sand")==1 && count(s,"material.water")==157,"fractional swaps preserve both materials");}
+        std::cout<<"submerged rate="<<rate<<"/256 displacement100="<<100*rate/256<<'\n';
+    }
+    const auto c=powder_catalog();GameSession s(c);auto snap=blank(*c,{{-1,0},3,160});
+    rect(snap,*c,-1,0,1,160,"material.stone");rect(snap,*c,1,0,1,160,"material.stone");rect(snap,*c,-1,159,3,1,"material.stone");
+    rect(snap,*c,0,20,1,139,"material.water");put(snap,*c,{0,10},"material.sand");snap.states[10*3+1].velocity_y=2048;
+    restore(s,snap);ticks(s,2);
+    need(s.world()->material_at({0,19})==s.world()->material_index("material.sand"),"airborne multi-step movement stops at liquid boundary without spending air speed underwater");
+    ticks(s,2);need(s.world()->material_at({0,19})==s.world()->material_index("material.sand"),"liquid entry waits for fractional credit");
+    ticks(s,1);need(s.world()->material_at({0,20})==s.world()->material_index("material.sand"),"boundary eventually admits powder at liquid rate");
+    snap=blank(*c,{{-2,0},5,12});rect(snap,*c,-2,0,5,12,"material.stone");
+    put(snap,*c,{0,2},"material.sand");rect(snap,*c,1,3,1,8,"material.water");restore(s,snap);
+    ticks(s,2);need(s.world()->material_at({0,2})==s.world()->material_index("material.sand"),"diagonal liquid entry also waits for fractional credit");
+    ticks(s,1);need(s.world()->material_at({1,3})==s.world()->material_index("material.sand") && count(s,"material.water")==8,"diagonal entry exchanges one liquid cell without bypassing sinking rate");
+    for(const int invalid:{0,257}){auto definitions=c->materials();definitions[1].powder_liquid_speed_q8=invalid;
+        need(!ContentRegistry::build(std::move(definitions)),"invalid liquid sinking rate rejected");}
+}
 void transport(){
     auto c=catalog(false);GameSession s(c);auto snap=blank(*c);
     put(snap,*c,{0,40},"material.sand");restore(s,snap);ticks(s,3);
@@ -774,6 +835,6 @@ void extensibility(){
 }
 int main(int argc,char** argv){try{
     const std::string name=argc==2?argv[1]:"";
-    if(name=="movement")movement();else if(name=="liquid")liquid();else if(name=="gas_fire")gas_fire();else if(name=="reactions")reactions();else if(name=="lab_persistence")persistence_test();else if(name=="lab_tools")tools();else if(name=="extensibility")extensibility();else if(name=="settling")settling();else if(name=="liquid_wake")liquid_wake();else if(name=="wide_liquid")wide_liquid();else if(name=="transport")transport();else if(name=="chemistry")chemistry();else if(name=="gas_transport")gas_transport();else if(name=="three_reagents")three_reagents();else if(name=="mechanical")mechanical();else if(name=="adhesion")adhesion();else if(name=="slime_reactions")slime_reactions();else if(name=="explosion")explosion();else if(name=="chain_reaction")chain_reaction();else if(name=="electricity")electricity();else if(name=="electric_persistence")electric_persistence();else if(name=="electric_effects")electric_effects();else if(name=="reaction_blobs")reaction_blobs();else if(name=="blob_persistence")blob_persistence();else if(name=="phase_variants")phase_variants();else if(name=="phase_physics")phase_physics();else if(name=="phase_persistence")phase_persistence();else throw std::runtime_error("Unknown material test case.");
+    if(name=="powder_block")powder_block();else if(name=="powder_sink")powder_sink();else if(name=="powder_liquid_rate")powder_liquid_rate();else if(name=="movement")movement();else if(name=="liquid")liquid();else if(name=="gas_fire")gas_fire();else if(name=="reactions")reactions();else if(name=="lab_persistence")persistence_test();else if(name=="lab_tools")tools();else if(name=="extensibility")extensibility();else if(name=="settling")settling();else if(name=="liquid_wake")liquid_wake();else if(name=="wide_liquid")wide_liquid();else if(name=="transport")transport();else if(name=="chemistry")chemistry();else if(name=="gas_transport")gas_transport();else if(name=="three_reagents")three_reagents();else if(name=="mechanical")mechanical();else if(name=="adhesion")adhesion();else if(name=="slime_reactions")slime_reactions();else if(name=="explosion")explosion();else if(name=="chain_reaction")chain_reaction();else if(name=="electricity")electricity();else if(name=="electric_persistence")electric_persistence();else if(name=="electric_effects")electric_effects();else if(name=="reaction_blobs")reaction_blobs();else if(name=="blob_persistence")blob_persistence();else if(name=="phase_variants")phase_variants();else if(name=="phase_physics")phase_physics();else if(name=="phase_persistence")phase_persistence();else throw std::runtime_error("Unknown material test case.");
     std::cout<<"PASS "<<name<<'\n';return 0;
 }catch(const std::exception& e){std::cerr<<"FAIL "<<e.what()<<'\n';return 1;}}

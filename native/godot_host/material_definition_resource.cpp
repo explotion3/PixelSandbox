@@ -20,6 +20,7 @@ void SandboxMaterialDefinition::_bind_methods(){
     FIELD(INT,lateral_speed_q8)
     FIELD(INT,flow_search)
     FIELD(INT,terminal_speed_q8)
+    FIELD(INT,powder_liquid_speed_q8)
     FIELD(INT,gas_upward_speed_q8)
     FIELD(INT,gas_horizontal_speed_q8)
     FIELD(INT,gas_downward_speed_q8)
@@ -65,6 +66,7 @@ bool SandboxMaterialDefinition::to_native(MaterialDefinition& out,String& error)
     out.lateral_speed_q8=lateral_speed_q8_;
     out.flow_search=flow_search_;
     out.terminal_speed_q8=terminal_speed_q8_;
+    out.powder_liquid_speed_q8=powder_liquid_speed_q8_;
     out.gas_upward_speed_q8=gas_upward_speed_q8_;
     out.gas_horizontal_speed_q8=gas_horizontal_speed_q8_;
     out.gas_downward_speed_q8=gas_downward_speed_q8_;

@@ -138,7 +138,8 @@ RegistryResult ContentRegistry::build(std::vector<MaterialDefinition> definition
             return {nullptr, "Invalid motion, density, heat or lifetime for '" + definition.id + "'."};
         if(definition.gravity_q8<0 || definition.gravity_q8>2048 || definition.damping_milli<0 || definition.damping_milli>1000 ||
            definition.lateral_speed_q8<1 || definition.lateral_speed_q8>2048 || definition.flow_search<1 || definition.flow_search>128 ||
-           definition.terminal_speed_q8<256 || definition.terminal_speed_q8>8192 || definition.burn_heat<0 || definition.burn_heat>10000 ||
+           definition.terminal_speed_q8<256 || definition.terminal_speed_q8>8192 ||
+           definition.powder_liquid_speed_q8<1 || definition.powder_liquid_speed_q8>256 || definition.burn_heat<0 || definition.burn_heat>10000 ||
            definition.cold_threshold<-1000 || definition.cold_threshold>0)
             return {nullptr,"Invalid transport or cold/burning parameters for '"+definition.id+"'."};
         if(definition.cold_chance_rev<0 || definition.cold_chance_rev>32767 || definition.warmth_chance_rev<0 || definition.warmth_chance_rev>32767 || (definition.source_gas && definition.cell_type!="gas"))return {nullptr,"Invalid source phase probability or gas mode: "+definition.id};

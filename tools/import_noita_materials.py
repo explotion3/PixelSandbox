@@ -419,6 +419,7 @@ def main():
                 'damping_milli':max(0,min(1000,round(float(attrs.get('liquid_damping','0.9'))*1000))),
                 'lateral_speed_q8':max(1,min(2048,round(float(attrs.get('liquid_flow_speed','0.25' if slime else '1'))*256))),
                 'flow_search':64,'terminal_speed_q8':2048,
+                'powder_liquid_speed_q8':102, # Project tuning, not a recovered Noita field.
                 # Direction caps are prototype tuning. Selected source definitions omit gas_* speeds.
                 'gas_upward_speed_q8':256,'gas_horizontal_speed_q8':256,'gas_downward_speed_q8':2048,
                 # Mechanical phases, force thresholds, spans and hold times are project rules.

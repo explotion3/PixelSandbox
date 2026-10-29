@@ -61,6 +61,7 @@ struct MaterialDefinition {
     int lateral_speed_q8 = 256;
     int flow_search = 64; // Local probe budget; open longer routes use the finite-row cache.
     int terminal_speed_q8 = 2048;
+    int powder_liquid_speed_q8 = 102; // Project tuning: downward liquid entry, 102/256 cells per tick.
     int gas_upward_speed_q8 = 256;
     int gas_horizontal_speed_q8 = 256;
     int gas_downward_speed_q8 = 2048; // Limit for downward impulses, not spontaneous sinking.
